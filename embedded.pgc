@@ -1,0 +1,42 @@
+#include "stdio.h"
+#include "stdlib.h"
+#include <unistd.h>
+
+
+void test()
+{
+    printf("Running test\n");
+
+    exec sql begin declare section;
+        struct Label {
+            char label_name[9];
+            int  line5;
+        } label;
+        struct LabelInd{
+            int label_name_ind;
+            int line5_ind;
+        } label_ind;
+
+        struct Label *label_p = &label;
+        struct LabelInd *label_ind_p = &label_ind;
+    exec sql end declare section;
+
+    exec sql CONNECT TO myDatabase AS conSet;
+
+    // exec sql declare cur cursor for SELECT label_name, line5 from label order by label_name;
+
+    // EXEC SQL WHENEVER NOT FOUND DO BREAK;
+    // exec sql open cur;
+
+    // while(1) {
+    //     exec sql fetch next from cur into :label:label_ind;
+    //     printf("%s %d\n", label.label_name, label.line5);
+    //     printf("%d %d\n", label_ind.label_name_ind, label_ind.line5_ind);
+    // }
+
+    exec sql insert into label values (:label_p:label_ind_p);
+
+    // EXEC SQL CLOSE cur;
+    
+    exec sql disconnect conSet;
+}
